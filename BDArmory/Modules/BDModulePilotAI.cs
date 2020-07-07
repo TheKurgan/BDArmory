@@ -278,10 +278,15 @@ namespace BDArmory.Modules
 
         // Ramming
         bool ramming = false; // Whether or not we're currently trying to ram someone.
+        public bool isRamming { get { return ramming; } } // Public access to check for ramming status.
         public bool outOfAmmo = false; // Indicator for being out of ammo. Set in competition mode only.
 
         // Collision Logging
         BDACompetitionMode BdComp;
+
+        // Targeting
+        bool hasEngines = true;
+        bool hasOperationalEngines = true;
 
         //wing command
         bool useRollHint;
@@ -801,6 +806,25 @@ namespace BDArmory.Modules
                 outOfAmmo = !hasAmmoAndGuns; // Set outOfAmmo if we don't have any guns with compatible ammo.
             }
             return hasAmmoAndGuns;
+        }
+
+        public bool HasOperationalEngines(bool operational = true)
+        { // Check if a vessel has 
+            if (!hasEngines) return false; // No engines previously detected, return false.
+            if (operational && !hasOperationalEngines) return false; // It's already been checked and found to be false, don't look again.
+            if (weaponManager)
+            {
+                using (var engine = vessel.FindPartModulesImplementing<ModuleEngines>().GetEnumerator())
+                    while (engine.MoveNext())
+                    {
+                        if (engine.Current == null) continue;
+                        if (!operational) return true; // Found an engine.
+                        if (engine.Current.isOperational) return true; // Found an operational engine.
+                    }
+            }
+            hasOperationalEngines = false; // No operational engines left.
+            if (!operational) hasEngines = false; // No engines left.
+            return false;
         }
 
         void FlyToTargetVessel(FlightCtrlState s, Vessel v)
@@ -1860,7 +1884,6 @@ namespace BDArmory.Modules
             //check for damaged parts
             if (Planetarium.GetUniversalTime() - vData.lastPossibleRammingTime > vData.closestTimeToCPA + BDArmorySettings.RAM_LOGGING_COLLISION_UPDATE && (int)vData.lastPossibleRammingTime != -1)
             {
-
                 //this vessel got rammed and lost parts are detected
                 if (vessel.parts.Count < vData.partCountBeforeRam && vData.rammedVessel == vessel)
                 {

@@ -3914,7 +3914,6 @@ namespace BDArmory.Modules
             }
 
             //scan and acquire new target
-            //if (Time.time - targetScanTimer > Mathf.Max(targetScanInterval,10f)) 
             if (Time.time - targetScanTimer > Mathf.Max(targetScanInterval, 1f)) // stupid hack to stop them retargetting too quickly
             {
                 targetScanTimer = Time.time;

@@ -893,13 +893,18 @@ namespace BDArmory.UI
                 {
                     if (target.Current != null && target.Current.Vessel && mf.CanSeeTarget(target.Current) && !target.Current.isMissile && target.Current.isThreat && !target.Current.isLandedOrSurfaceSplashed)
                     {
-                        float theta = Vector3.Angle(mf.vessel.srf_vel_direction, target.Current.velocity);
-                        float distance = (mf.vessel.transform.position - target.Current.position).magnitude;
-                        float targetScore = (target.Current == mf.currentTarget ? hysteresis : 1f) * ((bias - 1f) * Mathf.Pow(Mathf.Cos(theta / 2f), 2f) + 1f) / distance;
-                        if (finalTarget == null || targetScore > finalTargetScore)
+                        var pilotAI = mf.vessel.FindPartModuleImplementing<BDModulePilotAI>(); // Get the pilot AI if the vessel has one.
+                        var targetPilotAI = target.Current.Vessel.FindPartModuleImplementing<BDModulePilotAI>(); // Get the target's pilot AI if the vessel has one.
+                        if (pilotAI != null && targetPilotAI != null && (pilotAI.HasAmmoAndGuns() || targetPilotAI.HasOperationalEngines(false))) // Ignore targets with no working engines if we're ramming as they're going to die anyway.
                         {
-                            finalTarget = target.Current;
-                            finalTargetScore = targetScore;
+                            float theta = Vector3.Angle(mf.vessel.srf_vel_direction, target.Current.velocity);
+                            float distance = (mf.vessel.transform.position - target.Current.position).magnitude;
+                            float targetScore = (target.Current == mf.currentTarget ? hysteresis : 1f) * ((bias - 1f) * Mathf.Pow(Mathf.Cos(theta / 2f), 2f) + 1f) / distance;
+                            if (finalTarget == null || targetScore > finalTargetScore)
+                            {
+                                finalTarget = target.Current;
+                                finalTargetScore = targetScore;
+                            }
                         }
                     }
                 }
