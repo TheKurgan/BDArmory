@@ -1311,7 +1311,7 @@ namespace BDArmory.Control
                             vData.AverageSpeed += v.Current.srfSpeed;
                             vData.AverageAltitude += v.Current.altitude;
                             vData.averageCount++;
-                            if (vData.landedState)
+                            if (!BDArmorySettings.DISABLE_KILL_TIMER && vData.landedState)
                             {
                                 if (Planetarium.GetUniversalTime() - vData.landerKillTimer > 15)
                                 {

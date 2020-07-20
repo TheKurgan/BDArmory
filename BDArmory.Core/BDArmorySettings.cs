@@ -57,6 +57,7 @@ namespace BDArmory.Core
         [BDAPersistantSettingsField] public static bool FIRE_FX_IN_FLIGHT = false;
         [BDAPersistantSettingsField] public static int MAX_FIRES_PER_VESSEL = 10;                   //controls fx for penetration only for landed or splashed
         [BDAPersistantSettingsField] public static float FIRELIFETIME_IN_SECONDS = 90f;             //controls fx for penetration only for landed or splashed
+        [BDAPersistantSettingsField] public static bool DISABLE_KILL_TIMER = false;                 //disables the "Landed Too Long" timer.
         [BDAPersistantSettingsField] public static bool PERFORMANCE_LOGGING = false;
         [BDAPersistantSettingsField] public static bool AUTOCATEGORIZE_PARTS = true;
         [BDAPersistantSettingsField] public static bool SHOW_CATEGORIES = false;
